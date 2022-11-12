@@ -38,6 +38,7 @@ SAMPLE_LAYER_LISTS = [
         },
         {
             "type": "slide-in-text",
+            "position": "bottom-left",
             "text": "Random image\nwith slide-in-text",
         },
     ],
@@ -58,7 +59,7 @@ SAMPLE_LAYER_LISTS = [
         },
         {
             "type": "title",
-            "position": "bottom",
+            "position": "bottom",  # left/right are not desirable for `title`
             "text": "Random image\nwith title",
             "zoomAmount": 0,
         },
