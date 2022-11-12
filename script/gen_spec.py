@@ -3,6 +3,7 @@ import json
 import os
 import random
 import glob
+from typing import Union, Dict, Any
 
 import hydra
 from gamcho import hydra_
@@ -31,17 +32,24 @@ def get_random_image_path(base_dir) -> str:
 
 
 def get_layer_from(
-    orig_layer: omegaconf.DictConfig,
+    orig_layer: Union[Dict[str, Any], omegaconf.DictConfig],
     *,
     cfg,  # TODO Can we remove `cfg` in argument?
 ):
-    assert isinstance(orig_layer, omegaconf.DictConfig)
+    # Normalize type into dictionary
+    orig_layer_d = None
+    if isinstance(orig_layer, omegaconf.DictConfig):
+        orig_layer_d = OmegaConf.to_container(orig_layer)
+    if isinstance(orig_layer, dict):
+        orig_layer_d = orig_layer
 
-    if orig_layer["type"] in OFFICIAL_LAYER_TYPES:
-        return OmegaConf.to_container(orig_layer)
+    assert isinstance(orig_layer_d, dict)
+
+    if orig_layer_d["type"] in OFFICIAL_LAYER_TYPES:
+        return orig_layer_d
 
     # Custom type
-    if orig_layer["type"] == "random-photo":
+    if orig_layer_d["type"] == "random-photo":
         ret = {
             "type": "image",
             "path": get_random_image_path(cfg.random_image_base_dir),
