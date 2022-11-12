@@ -64,6 +64,36 @@ SAMPLE_LAYER_LISTS = [
             "zoomAmount": 0,
         },
     ],
+
+    # Random image and text side by side
+    [
+        {
+            "type": "image-overlay",
+            "position": "center-right",
+            "width": 0.45,
+            "height": 0.9,
+            "path": RANDOM_MAGIC,
+        },
+        {
+            "type": "slide-in-text",
+            "position": "center-left",
+            "text": "Side by side",
+        },
+    ],
+    [
+        {
+            "type": "image-overlay",
+            "position": "center-left",
+            "width": 0.45,
+            "height": 0.9,
+            "path": RANDOM_MAGIC,
+        },
+        {
+            "type": "slide-in-text",
+            "position": "center-right",
+            "text": "Side by side",
+        },
+    ],
 ]
 
 
