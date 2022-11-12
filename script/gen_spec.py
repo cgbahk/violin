@@ -2,6 +2,7 @@ from pathlib import Path
 import json
 import os
 import random
+import glob
 
 import hydra
 from gamcho import hydra_
@@ -12,6 +13,21 @@ from omegaconf import OmegaConf
 OFFICIAL_LAYER_TYPES = [
     "title-background",
 ]
+
+
+def get_random_image_path(base_dir) -> str:
+    assert Path(base_dir).is_dir()
+
+    image_patterns = ("**/*.png", "**/*.jpg")
+
+    image_paths = []
+    for pattern in image_patterns:
+        # Note `glob.glob` follows symlink, while `Path.glob` does not
+        image_paths += glob.glob(str(Path(base_dir) / pattern), recursive=True)
+
+    assert image_paths
+
+    return str(random.choice(image_paths))
 
 
 def get_layer_from(
@@ -28,7 +44,7 @@ def get_layer_from(
     if orig_layer["type"] == "random-photo":
         ret = {
             "type": "image",
-            "path": str(random.choice(list(Path(cfg.random_image_base_dir).iterdir()))),
+            "path": get_random_image_path(cfg.random_image_base_dir),
         }
         return ret
 
