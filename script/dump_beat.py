@@ -33,7 +33,7 @@ def app(cfg):
             break
 
     with open("beat.yml", "w") as beat_file:
-        yaml.safe_dump(beats, beat_file)
+        yaml.safe_dump(beats, beat_file, sort_keys=False)
 
 
 if __name__ == "__main__":

@@ -65,7 +65,7 @@ def app(cfg):
     spec = make_spec(cfg)
 
     with open("spec.yml", "w") as yml_file:
-        yaml.dump(spec, yml_file)
+        yaml.safe_dump(spec, yml_file, sort_keys=False)
 
     with open("spec.json", "w") as json_file:
         json.dump(spec, json_file)
