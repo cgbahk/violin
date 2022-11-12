@@ -4,6 +4,7 @@ import os
 import random
 import glob
 from typing import Union, Dict, Any, List
+from copy import deepcopy
 
 import hydra
 from gamcho import hydra_
@@ -103,7 +104,8 @@ def compile_layer(
     if isinstance(orig_layer, omegaconf.DictConfig):
         orig_layer_d = OmegaConf.to_container(orig_layer)
     if isinstance(orig_layer, dict):
-        orig_layer_d = orig_layer
+        # Deepcopy required, or same sample would have same image
+        orig_layer_d = deepcopy(orig_layer)
 
     assert isinstance(orig_layer_d, dict)
 
