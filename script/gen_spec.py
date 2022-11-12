@@ -15,6 +15,16 @@ OFFICIAL_LAYER_TYPES = [
     "title-background",
 ]
 
+SAMPLE_LAYERS = [
+    {
+        "type": "title-background",
+        "text": "title",
+    },
+    {
+        "type": "random-photo",
+    },
+]
+
 
 def get_random_image_path(base_dir) -> str:
     assert Path(base_dir).is_dir()
@@ -55,6 +65,10 @@ def get_layer_from(
             "path": get_random_image_path(cfg.random_image_base_dir),
         }
         return ret
+
+    if orig_layer_d["type"] == "random-layer":
+        # TODO Deepcopy may make yaml dump look a bit verbose and better
+        return get_layer_from(random.choice(SAMPLE_LAYERS), cfg=cfg)
 
     assert False  # This means NYI
 
