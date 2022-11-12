@@ -67,6 +67,11 @@ SAMPLE_LAYER_LISTS = [
 
     # Random image and text side by side
     [
+        # TODO Is it possible to set background as 'blur' effect, like in `resizeMode=contain-blur`?
+        # TODO Or use representative colors of the image
+        {
+            "type": "linear-or-radial-gradient",
+        },
         {
             "type": "image-overlay",
             "position": "center-right",
@@ -81,6 +86,9 @@ SAMPLE_LAYER_LISTS = [
         },
     ],
     [
+        {
+            "type": "linear-or-radial-gradient",
+        },
         {
             "type": "image-overlay",
             "position": "center-left",
@@ -139,6 +147,10 @@ def compile_layer(
             ret += compile_layer(layer, cfg=cfg)
 
         return ret
+
+    if orig_layer_d["type"] == "linear-or-radial-gradient":
+        choosen_type = random.choice(("linear-gradient", "radial-gradient"))
+        return [{"type": choosen_type}]
 
     # At this point type should be one of editly native, or would be failed during video generation
     # TODO Fail early here when this assumption is not true
