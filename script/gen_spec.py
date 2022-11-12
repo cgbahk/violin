@@ -100,7 +100,7 @@ def app(cfg):
         yaml.dump(spec, yml_file)
 
     with open("spec.json", "w") as json_file:
-        json.dump(spec, json_file)
+        json.dump(spec, json_file, indent=2)
 
 
 if __name__ == "__main__":
