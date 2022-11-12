@@ -3,7 +3,7 @@ import json
 import os
 import random
 import glob
-from typing import Union, Dict, Any
+from typing import Union, Dict, Any, List
 
 import hydra
 from gamcho import hydra_
@@ -41,11 +41,14 @@ def get_random_image_path(base_dir) -> str:
     return str(random.choice(image_paths))
 
 
-def get_layer_from(
+def compile_layer(
     orig_layer: Union[Dict[str, Any], omegaconf.DictConfig],
     *,
     cfg,  # TODO Can we remove `cfg` in argument?
-):
+) -> List[Dict[str, Any]]:
+    """
+    Compile single relatively high-level layer into list of raw editly-compatible layers
+    """
     # Normalize type into dictionary
     orig_layer_d = None
     if isinstance(orig_layer, omegaconf.DictConfig):
@@ -56,19 +59,19 @@ def get_layer_from(
     assert isinstance(orig_layer_d, dict)
 
     if orig_layer_d["type"] in OFFICIAL_LAYER_TYPES:
-        return orig_layer_d
+        return [orig_layer_d]
 
     # Custom type
     if orig_layer_d["type"] == "random-photo":
-        ret = {
+        ret = [{
             "type": "image",
             "path": get_random_image_path(cfg.random_image_base_dir),
-        }
+        }]
         return ret
 
     if orig_layer_d["type"] == "random-layer":
         # TODO Deepcopy may make yaml dump look a bit verbose and better
-        return get_layer_from(random.choice(SAMPLE_LAYERS), cfg=cfg)
+        return compile_layer(random.choice(SAMPLE_LAYERS), cfg=cfg)
 
     assert False  # This means NYI
 
@@ -92,10 +95,14 @@ def make_spec(cfg):
     cur_cut = cfg.start_bgm_cut_from
 
     for n, clip in enumerate(cfg.clips):
+        layers = []
+        for layer in clip.layers:
+            layers += compile_layer(layer, cfg=cfg)
+
         ret["clips"].append(
             {
                 "duration": clip.bgm_cut_to - cur_cut,  # TODO This may accumulate error
-                "layers": [get_layer_from(layer, cfg=cfg) for layer in clip.layers],
+                "layers": layers,
             }
         )
 
