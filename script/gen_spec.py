@@ -13,16 +13,57 @@ from omegaconf import OmegaConf
 
 OFFICIAL_LAYER_TYPES = [
     "title-background",
+    "title",
+    "subtitle",
+    "news-title",
+    "slide-in-text",
 ]
 
-SAMPLE_LAYERS = [
-    {
+SAMPLE_LAYER_LISTS = [
+    [{
         "type": "title-background",
-        "text": "title",
-    },
-    {
-        "type": "random-photo",
-    },
+        "text": "title-background",
+    }],
+
+    # random-photo at center with text overlay
+    [
+        {
+            "type": "random-photo",
+        },
+        {
+            "type": "subtitle",
+            "text": "random-photo\nwith subtitle",
+        },
+    ],
+    [
+        {
+            "type": "random-photo",
+        },
+        {
+            "type": "slide-in-text",
+            "text": "random-photo\nwith slide-in-text",
+        },
+    ],
+    [
+        {
+            "type": "random-photo",
+        },
+        {
+            "type": "news-title",
+            "text": "random-photo\nwith news-title",
+        },
+    ],
+    [
+        {
+            "type": "random-photo",
+        },
+        {
+            "type": "title",
+            "position": "bottom",
+            "text": "random-photo\nwith title",
+            "zoomAmount": 0,
+        },
+    ],
 ]
 
 
@@ -71,7 +112,13 @@ def compile_layer(
 
     if orig_layer_d["type"] == "random-layer":
         # TODO Deepcopy may make yaml dump look a bit verbose and better
-        return compile_layer(random.choice(SAMPLE_LAYERS), cfg=cfg)
+        choosen_layers = random.choice(SAMPLE_LAYER_LISTS)
+
+        ret = []
+        for layer in choosen_layers:
+            ret += compile_layer(layer, cfg=cfg)
+
+        return ret
 
     assert False  # This means NYI
 
