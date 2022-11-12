@@ -14,16 +14,6 @@ from omegaconf import OmegaConf
 
 RANDOM_MAGIC = "__RANDOM__"
 
-OFFICIAL_LAYER_TYPES = [
-    "title-background",
-    "title",
-    "subtitle",
-    "news-title",
-    "slide-in-text",
-    "image",
-    "image-overlay",
-]
-
 SAMPLE_LAYER_LISTS = [
     [{
         "type": "title-background",
@@ -109,13 +99,6 @@ def compile_layer(
 
     assert isinstance(orig_layer_d, dict)
 
-    # Resolve image path
-    if orig_layer_d["type"] in ("image", "image-overlay") and orig_layer_d["path"] == RANDOM_MAGIC:
-        orig_layer_d["path"] = get_random_image_path(cfg.random_image_base_dir)
-
-    if orig_layer_d["type"] in OFFICIAL_LAYER_TYPES:
-        return [orig_layer_d]
-
     if orig_layer_d["type"] == "random-layer":
         # TODO Deepcopy may make yaml dump look a bit verbose and better
         choosen_layers = random.choice(SAMPLE_LAYER_LISTS)
@@ -126,7 +109,14 @@ def compile_layer(
 
         return ret
 
-    assert False  # This means NYI
+    # At this point type should be one of editly native, or would be failed during video generation
+    # TODO Fail early here when this assumption is not true
+
+    # Resolve image path
+    if orig_layer_d["type"] in ("image", "image-overlay") and orig_layer_d["path"] == RANDOM_MAGIC:
+        orig_layer_d["path"] = get_random_image_path(cfg.random_image_base_dir)
+
+    return [orig_layer_d]
 
 
 def make_spec(cfg):
