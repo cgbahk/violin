@@ -11,12 +11,16 @@ import yaml
 import omegaconf
 from omegaconf import OmegaConf
 
+RANDOM_MAGIC = "__RANDOM__"
+
 OFFICIAL_LAYER_TYPES = [
     "title-background",
     "title",
     "subtitle",
     "news-title",
     "slide-in-text",
+    "image",
+    "image-overlay",
 ]
 
 SAMPLE_LAYER_LISTS = [
@@ -25,42 +29,46 @@ SAMPLE_LAYER_LISTS = [
         "text": "title-background",
     }],
 
-    # random-photo at center with text overlay
+    # Random image at center with text overlay
     [
         {
-            "type": "random-photo",
+            "type": "image",
+            "path": RANDOM_MAGIC,
         },
         {
             "type": "subtitle",
-            "text": "random-photo\nwith subtitle",
+            "text": "Random image\nwith subtitle",
         },
     ],
     [
         {
-            "type": "random-photo",
+            "type": "image",
+            "path": RANDOM_MAGIC,
         },
         {
             "type": "slide-in-text",
-            "text": "random-photo\nwith slide-in-text",
+            "text": "Random image\nwith slide-in-text",
         },
     ],
     [
         {
-            "type": "random-photo",
+            "type": "image",
+            "path": RANDOM_MAGIC,
         },
         {
             "type": "news-title",
-            "text": "random-photo\nwith news-title",
+            "text": "Random image\nwith news-title",
         },
     ],
     [
         {
-            "type": "random-photo",
+            "type": "image",
+            "path": RANDOM_MAGIC,
         },
         {
             "type": "title",
             "position": "bottom",
-            "text": "random-photo\nwith title",
+            "text": "Random image\nwith title",
             "zoomAmount": 0,
         },
     ],
@@ -99,16 +107,12 @@ def compile_layer(
 
     assert isinstance(orig_layer_d, dict)
 
+    # Resolve image path
+    if orig_layer_d["type"] in ("image", "image-overlay") and orig_layer_d["path"] == RANDOM_MAGIC:
+        orig_layer_d["path"] = get_random_image_path(cfg.random_image_base_dir)
+
     if orig_layer_d["type"] in OFFICIAL_LAYER_TYPES:
         return [orig_layer_d]
-
-    # Custom type
-    if orig_layer_d["type"] == "random-photo":
-        ret = [{
-            "type": "image",
-            "path": get_random_image_path(cfg.random_image_base_dir),
-        }]
-        return ret
 
     if orig_layer_d["type"] == "random-layer":
         # TODO Deepcopy may make yaml dump look a bit verbose and better
