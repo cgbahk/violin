@@ -81,7 +81,7 @@ SAMPLE_LAYER_LISTS = [
             "path": RANDOM_MAGIC,
         },
         {
-            "type": "slide-in-text",
+            "type": "slide-in-text",  # TODO Slide-in is too slow, fade-out is too fast
             "position": "center-left",
             "text": "Side by side",
         },
