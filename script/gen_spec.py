@@ -11,6 +11,7 @@ from gamcho import hydra_
 import yaml
 import omegaconf
 from omegaconf import OmegaConf
+import imagesize
 
 RANDOM_MAGIC = "__RANDOM__"
 
@@ -151,6 +152,26 @@ def compile_layer(
     if orig_layer_d["type"] == "linear-or-radial-gradient":
         choosen_type = random.choice(("linear-gradient", "radial-gradient"))
         return [{"type": choosen_type}]
+
+    if orig_layer_d["type"].startswith("image-overlay-"):
+        position = {
+            "image-overlay-left": "center-left",
+            "image-overlay-right": "center-right",
+        }[orig_layer_d["type"]]
+
+        orig_layer_d.update({
+            "type": "image-overlay",
+            "position": position,
+        })
+
+        width, height = imagesize.get(orig_layer_d["path"])
+
+        if width < height:
+            orig_layer_d.update({"height": 0.9})
+        else:
+            orig_layer_d.update({"width": 0.45})
+
+        return [orig_layer_d]
 
     # At this point type should be one of editly native, or would be failed during video generation
     # TODO Fail early here when this assumption is not true

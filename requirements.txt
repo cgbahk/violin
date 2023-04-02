@@ -3,3 +3,4 @@ hydra-core
 pyyaml
 hydra-core>=1.0.7,<1.1
 just_playback
+imagesize
